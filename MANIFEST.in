@@ -1,0 +1,4 @@
+include build-requirements.pip
+include test_settings.py
+include LICENSE
+graft docs
