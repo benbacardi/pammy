@@ -1,0 +1,15 @@
+{% extend 'nuit/base.html' topbar=True %}
+
+{% block content %}
+
+<h1>IP Address Allocations</h1>
+
+<ul>
+    {% for allocation in allocations %}
+    <li>
+        {{allocation.name}} - {{allocation}}
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

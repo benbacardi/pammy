@@ -7,11 +7,13 @@ import sys
 INSTALL_REQUIRES = [
     'django',
     'django_autoconfig',
+    'django-nuit',
+    'django-tastypie',
     'netaddr',
 ]
 
 setup(
-    name=-'pammy',
+    name='pammy',
     version=__VERSION__,
     packages=find_packages(),
     description='IP Address Management tool',
