@@ -19,19 +19,3 @@ class AllocationResource(ModelResource):
             'network': ALL,
             'supernet': ALL_WITH_RELATIONS,
         }
-
-class AllocationResource0(ModelResource):
-    subnets = fields.ToManyField('self', 'subnets', null=True)
-    parent = fields.ForeignKey('self', 'parent', null=True)
-
-    class Meta:
-        queryset = Allocation.objects.all()
-        fields = [
-            'name',
-            'network',
-            'pk',
-        ]
-        filtering = {
-            'network': ALL,
-            'supernet': ALL_WITH_RELATIONS,
-        }
