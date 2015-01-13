@@ -1,15 +1,102 @@
 {% extend 'nuit/base.html' topbar=True %}
 
+{% block css %}
+
+<style>
+
+    .allocation-collapse i:before {
+        transform: rotate(90deg);
+    }
+
+    table.allocations {
+        width: 100%;
+    }
+
+    table.allocations .range {
+        width: 200px;
+    }
+
+    table.allocations .subnets {
+        width: 150px;
+    }
+
+    .icon.button {
+        margin-bottom: 0;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .level-1 td:first-child {
+        padding-left: 20px;
+    }
+
+    .level-2 td:first-child {
+        padding-left: 40px;
+    }
+
+    .level-3 td:first-child {
+        padding-left: 60px;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type='text/javascript'>
+
+    $(document).ready(function() {
+
+        $('.allocations').on('click', '.allocation-expand', function(e) {
+            e.preventDefault();
+            var $a = $(this);
+            var $tr = $a.closest('tr');
+            var level = $tr.data('level');
+            if ( level == undefined ) {
+                level = 0;
+            }
+            var request = $.get('{% url 'pammy.views.ui.allocation_table' %}', {'supernet': $tr.data('network')});
+            request.done(function(d) {
+                $a.removeClass('allocation-expand').addClass('allocation-collapse');
+                $d = $(d);
+                $d.attr('data-level', level + 1);
+                $d.attr('data-supernet', $tr.data('network'));
+                $d.addClass('level-' + (level + 1));
+                $tr.after($d);
+            });
+        });
+
+        $('.allocations').on('click', '.allocation-collapse', function(e) {
+            e.preventDefault();
+            var $a = $(this);
+            var $tr = $a.closest('tr');
+            $a.removeClass('allocation-collapse').addClass('allocation-expand');
+            $("tr[data-supernet='" + $tr.data('network') + "']").remove();
+        });
+
+    });
+
+</script>
+
+{% endblock %}
+
 {% block content %}
 
 <h1>IP Address Allocations</h1>
 
-<ul>
-    {% for allocation in allocations %}
-    <li>
-        {{allocation.name}} - {{allocation}}
-    </li>
-    {% endfor %}
-</ul>
+<table class='allocations'>
+    <thead>
+        <tr>
+            <th class='range'>IP Range</th>
+            <th class='name'>Name</th>
+            <th class='subnets'>Allocated Subnets</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% with 1 as level %}
+            {% include 'pammy/allocation_table.html' %}
+        {% endwith %}
+    </tbody>
+</table>
 
 {% endblock %}

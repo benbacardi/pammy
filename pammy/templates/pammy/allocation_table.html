@@ -1,0 +1,7 @@
+{% for allocation in allocations %}
+    <tr data-network='{{allocation.network}}'>
+        <td>{% if allocation.subnets.exists %}<a href='#' class='allocation-expand'><i class='fi-play'></i></a> {% endif %}{{allocation.network}}</td>
+        <td>{{allocation.name}}</td>
+        <td>{{allocation.subnets.count}}</td>
+    </tr>
+{% endfor %}

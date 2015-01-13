@@ -1,7 +1,7 @@
 '''Pammy views'''
 from django.shortcuts import render
 
-from .models import Allocation
+from ..models import Allocation
 
 def ip_list(request):
 

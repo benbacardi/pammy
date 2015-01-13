@@ -2,13 +2,15 @@
 from django.db import models
 from django.dispatch import receiver
 
+from closuretree.models import ClosureModel
+
 from .fields import IPNetworkField
 
-class Allocation(models.Model):
+class Allocation(ClosureModel):
 
     name = models.CharField(max_length=500, unique=True)
     network = IPNetworkField(unique=True)
-    parent = models.ForeignKey('self', blank=True, null=True, related_name='subnets')
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='subnets', on_delete=models.DO_NOTHING)
 
     def save(self, *args, **kwargs):
         try:
@@ -23,8 +25,16 @@ class Allocation(models.Model):
     def __str__(self):
         return str(self.network)
 
+    class ClosureMeta:
+        parent_attr = 'parent'
+
+@receiver(models.signals.pre_delete, sender=Allocation)
+def shuffle_parents_on_delete(sender, **kwargs):
+    instance = kwargs['instance']
+    instance.subnets.update(parent=instance.parent)
+
 @receiver(models.signals.post_save, sender=Allocation)
-def shuffle_parents(sender, **kwargs):
+def shuffle_parents_on_save(sender, **kwargs):
     instance = kwargs['instance']
     children = Allocation.objects.filter(network__is_subnet_of=instance.network, parent=instance.parent).exclude(pk=instance.pk)
     children.update(parent=instance)

@@ -9,6 +9,7 @@ INSTALL_REQUIRES = [
     'django_autoconfig',
     'django-nuit',
     'django-tastypie',
+    'django-closuretree',
     'netaddr',
 ]
 
