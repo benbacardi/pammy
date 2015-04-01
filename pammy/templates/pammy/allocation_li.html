@@ -1,0 +1,18 @@
+{% for allocation in allocations %}
+    <li>
+
+        <span class='network'>{{allocation.network}}</span>
+
+        <span class='subnets'>{{allocation.subnets.count}}</span>
+        <span class='name'>{{allocation.name}}</span>
+
+        {% if allocation.subnets.count %}
+        <ul class='subnets'>
+            {% with allocation.subnets.all as allocations %}
+            {% include 'pammy/allocation_li.html' %}
+            {% endwith %}
+        </ul>
+        {% endif %}
+
+    </li>
+{% endfor %}

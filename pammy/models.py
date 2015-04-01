@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from closuretree.models import ClosureModel
 
 from .fields import IPNetworkField
+from .utils import subnet_complement
 
 class Allocation(ClosureModel):
 
@@ -21,6 +22,9 @@ class Allocation(ClosureModel):
         except IndexError:
             self.parent = None
         super(Allocation, self).save(*args, **kwargs)
+
+    def complement(self):
+        return subnet_complement(self.network, [x.network for x in self.subnets.all()])
 
     def __str__(self):
         return str(self.network)

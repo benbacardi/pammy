@@ -1,8 +1,12 @@
-{% extend 'nuit/base.html' topbar=True %}
+{% extend 'nuit/base.html' topbar=True rightmenu=True %}
 
 {% block css %}
 
 <style>
+
+    .allocation-leaf {
+        cursor: default;
+    }
 
     .allocation-collapse i:before {
         transform: rotate(90deg);
@@ -13,7 +17,7 @@
     }
 
     table.allocations .range {
-        width: 200px;
+        width: 300px;
     }
 
     table.allocations .subnets {
@@ -35,6 +39,32 @@
 
     .level-3 td:first-child {
         padding-left: 60px;
+    }
+
+    ul.allocations, ul.allocations ul, ul.allocations li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    ul.allocations li {
+        width: 100%;
+    }
+
+    ul.allocations ul {
+        margin-left: 20px;
+    }
+
+    ul.allocations span.name {
+        display: inline-block;
+        width: 300px;
+        float: right;
+    }
+
+    ul.allocations span.subnets {
+        display: inline-block;
+        width: 150px;
+        float: right;
     }
 
 </style>
@@ -71,12 +101,35 @@
             var $a = $(this);
             var $tr = $a.closest('tr');
             $a.removeClass('allocation-collapse').addClass('allocation-expand');
-            $("tr[data-supernet='" + $tr.data('network') + "']").remove();
+
+            var findChildren = function(tr) {
+                var depth = tr.data('level');
+                return tr.nextUntil($('tr').filter(function() {
+                    return $(this).data('level') <= depth;
+                }));
+            }
+
+            var $children = findChildren($tr);
+            $children.remove();
         });
 
     });
 
 </script>
+
+{% endblock %}
+
+{% block right_menu %}
+
+{% menu_section 'Add Subnet' %}
+
+    <form method='post'>
+        {% foundation_form new_allocation collapse_container=True %}
+        {% end_foundation_form %}
+        <input type='submit' class='tiny button expand' value='Add' />
+    </form>
+
+{% end_menu_section %}
 
 {% endblock %}
 
@@ -89,13 +142,11 @@
         <tr>
             <th class='range'>IP Range</th>
             <th class='name'>Name</th>
-            <th class='subnets'>Allocated Subnets</th>
+            <th class='subnets'>&nbsp;</th>
         </tr>
     </thead>
     <tbody>
-        {% with 1 as level %}
-            {% include 'pammy/allocation_table.html' %}
-        {% endwith %}
+        {% include 'pammy/allocation_table.html' %}
     </tbody>
 </table>
 

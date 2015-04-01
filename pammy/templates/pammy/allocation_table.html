@@ -1,7 +1,15 @@
 {% for allocation in allocations %}
-    <tr data-network='{{allocation.network}}'>
-        <td>{% if allocation.subnets.exists %}<a href='#' class='allocation-expand'><i class='fi-play'></i></a> {% endif %}{{allocation.network}}</td>
+    <tr data-network='{{allocation.network}}' data-level='0'>
+        <td>
+            {% if allocation.subnets.exists %}
+                <a href='#' class='allocation-expand'><i class='fi-play'></i></a>
+            {% else %}
+                <i class='fi-list-thumbnails'></i>
+            {% endif %}
+            &nbsp;{{allocation.network}}</td>
         <td>{{allocation.name}}</td>
-        <td>{{allocation.subnets.count}}</td>
+        <td>
+            <a href='{% url 'pammy/divide' network=allocation.network %}' class='tiny icon radius button'>Divide</a>
+        </td>
     </tr>
 {% endfor %}

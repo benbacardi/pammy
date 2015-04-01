@@ -1,0 +1,22 @@
+{% for allocation in allocations %}
+    <div class='row allocation'>
+        <div class='medium-3 columns'>
+            {% if allocation.subnets.count %}<a href='#' class='allocation-collapse'><i class='fi-play'></i></a>{% else %}<i style='color: white' class='fi-x'></i>{% endif %} {{allocation.network}}
+        </div>
+        <div class='medium-7 columns'>
+            {{allocation.name}}
+        </div>
+        <div class='medium-2 columns'>
+            {{allocation.subnets.count}}
+        </div>
+        {% if allocation.subnets.count %}
+        <div class='small-12 columns'>
+            <div class='subnets' style='padding-left: 15px'>
+            {% with allocation.subnets.all as allocations %}
+                {% include 'pammy/allocation_divs.html' %}
+            {% endwith %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endfor %}

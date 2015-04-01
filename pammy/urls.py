@@ -6,7 +6,9 @@ from django.views.generic import TemplateView
 from .api.v1 import api as v1_api
 
 urlpatterns = patterns('',
+
     url(r'^$', 'pammy.views.ip_list'),
+    url(r'^divide/(?P<network>[\d\./]+)/$', 'pammy.views.divide', name='pammy/divide'),
 
     url(r'^ui/allocation-table/$', 'pammy.views.ui.allocation_table'),
 
