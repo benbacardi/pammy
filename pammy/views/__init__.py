@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
+from netaddr import IPNetwork, IPAddress, AddrFormatError
+
 from ..models import Allocation
 from ..forms import AllocationForm
 
@@ -39,6 +41,29 @@ def divide(request, network):
 def fill(request, network):
 
     allocation = get_object_or_404(Allocation, network=network)
+
+    if request.method == 'POST':
+
+        x = request.POST
+        networks = []
+        for key, value in request.POST.items():
+            if key.startswith('network_'):
+                try:
+                    _, ip, prefix = key.split('_')
+                except ValueError:
+                    continue
+                try:
+                    ip_address = IPAddress(ip)
+                    ip_network = IPNetwork(str(ip_address) + '/' + prefix)
+                except AddrFormatError:
+                    continue
+                if ip_network[0] != ip_address:
+                    continue
+                networks.append(str(ip_network))
+                Allocation(network=ip_network, name=value).save()
+        messages.success(request, 'Successfully created the networks {}'.format(', '.join(networks)))
+        return HttpResponseRedirect(reverse('pammy/ip_list'))
+
     complement = list(allocation.complement())
 
     if not complement:

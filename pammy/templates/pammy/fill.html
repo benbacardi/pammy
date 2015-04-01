@@ -10,6 +10,10 @@
         display: none;
     }
 
+    tr.disabled {
+        opacity: 0.5;
+    }
+
 </style>
 
 {% endblock %}
@@ -31,6 +35,50 @@
                 $(this).html(show_text);
             }
         });
+
+        var split_url = '{% url 'pammy/ui/split_network' %}';
+        
+        $('.fills').on('click', '.split-network', function(e) {
+            e.preventDefault()
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            var level = $tr.data('level');
+            if ( level == undefined ) {
+                level = 0;
+            }
+            var request = $.get(split_url, {'network': $tr.data('network')});
+            request.done(function(d) {
+                $d = $(d);
+                $d.attr('data-level', level + 1);
+                $d.addClass('level-' + (level + 1));
+                $tr.after($d);
+                $d.find('input').first().focus();
+                $this.remove();
+            });
+        });
+
+        $('.fills').on('click', '.disable-network', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            $tr.find('input')
+                .attr('name', 'disabled_' + $tr.data('network-id'))
+                .hide();
+            $tr.addClass('disabled');
+            $this.removeClass('disable-network').addClass('enable-network').html('Re-add');
+        });
+
+        $('.fills').on('click', '.enable-network', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            $tr.find('input')
+                .attr('name', 'network_' + $tr.data('network-id'))
+                .show().focus();
+            $tr.removeClass('disabled');
+            $this.removeClass('enable-network').addClass('disable-network').html('Remove');
+        });
+
     });
 
 </script>
@@ -45,12 +93,15 @@
 
 <p><a href='#' class='tiny icon radius button' id='show-existing'>Show existing subnets</a></p>
 
+<form method='post'>
+    {% csrf_token %}
 <table class='fills'>
     <thead>
         <tr>
             <th class='range'>IP Range</th>
             <th>Name</th>
             <th class='subnets'>Hosts</th>
+            <th class='subnets'></th>
         </tr>
     </thead>
     <tbody>
@@ -60,16 +111,17 @@
             <td>{{network}}</td>
             <td>{{existing.name}}</td>
             <td>{{network|length}}</td>
+            <td></td>
         </tr>
         {% else %}
-        <tr>
-            <td>{{network}}</td>
-            <td><input type='text' name=''  /></td>
-            <td>{{network|length}}</td>
-        </tr>
+            {% include 'pammy/fill_create_network_row.html' %}
         {% endif %}
         {% endfor %}
     </tbody>
 </table>
+
+<input type='submit' value='Save' class='button' />
+
+</form>
 
 {% endblock %}

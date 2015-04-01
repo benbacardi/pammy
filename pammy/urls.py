@@ -11,7 +11,8 @@ urlpatterns = patterns('',
     url(r'^divide/(?P<network>[\d\./]+)/$', 'pammy.views.divide', name='pammy/divide'),
     url(r'^fill/(?P<network>[\d\./]+)/$', 'pammy.views.fill', name='pammy/fill'),
 
-    url(r'^ui/allocation-table/$', 'pammy.views.ui.allocation_table'),
+    url(r'^ui/allocation-table/$', 'pammy.views.ui.allocation_table', name='pammy/ui/allocation_table'),
+    url(r'^ui/split-network/$', 'pammy.views.ui.split_network', name='pammy/ui/split_network'),
 
     url(r'^test/$', TemplateView.as_view(template_name='pammy/test.html')),
     url(r'^test2/$', TemplateView.as_view(template_name='pammy/test2.html')),

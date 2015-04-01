@@ -1,0 +1,11 @@
+<tr data-network='{{network}}' data-network-id='{{network.value}}_{{network.prefixlen}}'>
+    <td>{{network}}</td>
+    <td><input type='text' name='network_{{network.value}}_{{network.prefixlen}}' /></td>
+    <td>{{network|length}}</td>
+    <td>
+        {% if network|length > 1 %}
+        <a href='#' class='split-network tiny radius icon button'>Split</a>
+        {% endif %}
+        <a href='#' class='disable-network tiny radius icon button'>Remove</a>
+    </td>
+</tr>
