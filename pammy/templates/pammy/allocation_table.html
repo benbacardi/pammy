@@ -9,7 +9,12 @@
             &nbsp;{{allocation.network}}</td>
         <td>{{allocation.name}}</td>
         <td>
-            <a href='{% url 'pammy/divide' network=allocation.network %}' class='tiny icon radius button'>Divide</a>
+            {% if not allocation.fully_divided %}
+                <a href='{% url 'pammy/divide' network=allocation.network %}' class='tiny icon radius button'>Divide</a>
+            {% endif %}
+            {% if not allocation.full %}
+                <a href='{% url 'pammy/fill' network=allocation.network %}' class='tiny icon radius button'>Fill</a>
+            {% endif %}
         </td>
     </tr>
 {% endfor %}

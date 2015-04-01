@@ -23,6 +23,18 @@ class Allocation(ClosureModel):
             self.parent = None
         super(Allocation, self).save(*args, **kwargs)
 
+    @property
+    def full(self):
+        try:
+            self.complement().next()
+            return False
+        except StopIteration:
+            return True
+
+    def fully_divided(self):
+        networks = list(self.network.subnet(self.network.prefixlen + 1))
+        return len(networks) == Allocation.objects.filter(network__in=networks).count()
+
     def complement(self):
         return subnet_complement(self.network, [x.network for x in self.subnets.all()])
 

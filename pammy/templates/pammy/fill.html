@@ -1,0 +1,75 @@
+{% extend 'pammy/base.html' %}
+
+{% block css %}
+{{block.super}}
+
+<style type='text/css'>
+
+    tr.existing {
+        opacity: 0.5;
+        display: none;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type='text/javascript'>
+
+    $(document).ready(function() {
+    
+        var show_text = 'Show existing subnets';
+        var hide_text = 'Hide existing subnets';
+
+        $('#show-existing').click(function() {
+            $('.existing').toggle();
+            if ($(this).html() == show_text) {
+                $(this).html(hide_text);
+            } else {
+                $(this).html(show_text);
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Fill {{allocation}}</h1>
+
+<p>The following subnets are needed to fill {{allocation}}.</p>
+
+<p><a href='#' class='tiny icon radius button' id='show-existing'>Show existing subnets</a></p>
+
+<table class='fills'>
+    <thead>
+        <tr>
+            <th class='range'>IP Range</th>
+            <th>Name</th>
+            <th class='subnets'>Hosts</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for network, existing in networks %}
+        {% if existing %}
+        <tr class='existing'>
+            <td>{{network}}</td>
+            <td>{{existing.name}}</td>
+            <td>{{network|length}}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td>{{network}}</td>
+            <td><input type='text' name=''  /></td>
+            <td>{{network|length}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

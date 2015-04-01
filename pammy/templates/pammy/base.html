@@ -1,1 +1,38 @@
-{% extend 'nuit/base.html' topbar=True %}
+{% extend 'nuit/base.html' topbar=True app_title='IP Address Management' app_url='pammy/ip_list' %}
+
+{% block css %}
+
+<style type='text/css'>
+
+    table tr td input[type=text] {
+        margin-bottom: 0;
+    }
+
+    .icon.button {
+        margin-bottom: 0;
+        padding: 0.2rem 0.4rem;
+    }
+
+    table.allocations, table.fills {
+        width: 100%;
+    }
+
+    table.allocations .range {
+        width: 300px;
+    }
+
+    table.allocations .subnets {
+        width: 150px;
+    }
+
+    table.fills .range {
+        width: 150px;
+    }
+
+    table.fills .subnets {
+        width: 150px;
+    }
+
+</style>
+
+{% endblock %}

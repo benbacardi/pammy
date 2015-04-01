@@ -4,4 +4,10 @@
 
 <h1>Divide {{allocation}}</h1>
 
+<ul>
+{% for network in allocation.complement %}
+    <li>{{network}}</li>
+{% endfor %}
+</ul>
+
 {% endblock %}

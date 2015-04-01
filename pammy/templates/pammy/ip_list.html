@@ -1,6 +1,7 @@
-{% extend 'nuit/base.html' topbar=True rightmenu=True %}
+{% extend 'pammy/base.html' topbar=True rightmenu=True %}
 
 {% block css %}
+{{block.super}}
 
 <style>
 
@@ -10,23 +11,6 @@
 
     .allocation-collapse i:before {
         transform: rotate(90deg);
-    }
-
-    table.allocations {
-        width: 100%;
-    }
-
-    table.allocations .range {
-        width: 300px;
-    }
-
-    table.allocations .subnets {
-        width: 150px;
-    }
-
-    .icon.button {
-        margin-bottom: 0;
-        padding: 0.2rem 0.4rem;
     }
 
     .level-1 td:first-child {

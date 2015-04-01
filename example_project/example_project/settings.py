@@ -168,6 +168,9 @@ LOGGING = {
     }
 }
 
+NUIT_GLOBAL_TITLE = 'Pammy'
+NUIT_GLOBAL_LINK = '/pammy/'
+
 try:
     from local_settings import *
 except ImportError:

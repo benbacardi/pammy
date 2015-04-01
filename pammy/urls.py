@@ -7,8 +7,9 @@ from .api.v1 import api as v1_api
 
 urlpatterns = patterns('',
 
-    url(r'^$', 'pammy.views.ip_list'),
+    url(r'^$', 'pammy.views.ip_list', name='pammy/ip_list'),
     url(r'^divide/(?P<network>[\d\./]+)/$', 'pammy.views.divide', name='pammy/divide'),
+    url(r'^fill/(?P<network>[\d\./]+)/$', 'pammy.views.fill', name='pammy/fill'),
 
     url(r'^ui/allocation-table/$', 'pammy.views.ui.allocation_table'),
 
