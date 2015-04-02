@@ -1,6 +1,12 @@
 {% extend 'nuit/base.html' topbar=True app_title='IP Address Management' app_url='pammy/ip_list' %}
+{% load compress %}
+{% load static %}
 
 {% block css %}
+
+{% compress css %}
+    <link rel='stylesheet' type='text/x-scss' href='{% static 'css/pammy.scss' %}' />
+{% endcompress %}
 
 <style type='text/css'>
 
@@ -31,22 +37,6 @@
 
     table.fills .subnets {
         width: 150px;
-    }
-
-    .level-1 td:first-child {
-        padding-left: 20px;
-    }
-
-    .level-2 td:first-child {
-        padding-left: 40px;
-    }
-
-    .level-3 td:first-child {
-        padding-left: 60px;
-    }
-
-    .level-4 td:first-child {
-        padding-left: 80px;
     }
 
     tr.disabled {
