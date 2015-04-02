@@ -9,6 +9,25 @@ from netaddr import IPNetwork, IPAddress, AddrFormatError
 from ..models import Allocation
 from ..forms import AllocationForm
 
+def create_posted_networks(request):
+    networks = []
+    for key, value in request.POST.items():
+        if key.startswith('network_'):
+            try:
+                _, ip, prefix = key.split('_')
+            except ValueError:
+                continue
+            try:
+                ip_address = IPAddress(ip)
+                ip_network = IPNetwork(str(ip_address) + '/' + prefix)
+            except AddrFormatError:
+                continue
+            if ip_network[0] != ip_address:
+                continue
+            networks.append(str(ip_network))
+            Allocation(network=ip_network, name=value).save()
+    messages.success(request, 'Successfully created the networks {}'.format(', '.join(networks)))
+
 def ip_list(request):
 
     if 'supernet' in request.GET:
@@ -34,8 +53,18 @@ def divide(request, network):
 
     allocation = get_object_or_404(Allocation, network=network)
 
+    if request.method == 'POST':
+        create_posted_networks(request)
+        return HttpResponseRedirect(reverse('pammy/ip_list'))
+
+    divisions = zip(range(allocation.network.prefixlen + 1, 33), [2**x for x in range(1, 33)])
+
+    networks = allocation.divide()
+
     return render(request, 'pammy/divide.html', {
+        'divisions': divisions,
         'allocation': allocation,
+        'networks': networks,
     })
 
 def fill(request, network):
@@ -43,25 +72,7 @@ def fill(request, network):
     allocation = get_object_or_404(Allocation, network=network)
 
     if request.method == 'POST':
-
-        x = request.POST
-        networks = []
-        for key, value in request.POST.items():
-            if key.startswith('network_'):
-                try:
-                    _, ip, prefix = key.split('_')
-                except ValueError:
-                    continue
-                try:
-                    ip_address = IPAddress(ip)
-                    ip_network = IPNetwork(str(ip_address) + '/' + prefix)
-                except AddrFormatError:
-                    continue
-                if ip_network[0] != ip_address:
-                    continue
-                networks.append(str(ip_network))
-                Allocation(network=ip_network, name=value).save()
-        messages.success(request, 'Successfully created the networks {}'.format(', '.join(networks)))
+        create_posted_networks(request)
         return HttpResponseRedirect(reverse('pammy/ip_list'))
 
     complement = list(allocation.complement())

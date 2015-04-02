@@ -27,3 +27,20 @@ def split_network(request):
     return render(request, 'pammy/split_network.html', {
         'networks': network.subnet(network.prefixlen + 1),
     })
+
+def divide_network(request):
+
+    try:
+        allocation = Allocation.objects.get(network=request.GET['network'])
+        prefixlen = int(request.GET['prefixlen'])
+        if prefixlen <= allocation.network.prefixlen:
+            raise ValueError
+    except (Allocation.DoesNotExist, KeyError, ValueError):
+        return HttpResponseBadRequest()
+
+    networks = allocation.divide(prefixlen)
+
+    return render(request, 'pammy/divide_create_network.html' , {
+        'networks': networks,
+    })
+    

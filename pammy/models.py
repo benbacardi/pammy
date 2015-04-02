@@ -9,7 +9,7 @@ from .utils import subnet_complement
 
 class Allocation(ClosureModel):
 
-    name = models.CharField(max_length=500, unique=True)
+    name = models.CharField(max_length=500)
     network = IPNetworkField(unique=True)
     parent = models.ForeignKey('self', blank=True, null=True, related_name='subnets', on_delete=models.DO_NOTHING)
 
@@ -37,6 +37,19 @@ class Allocation(ClosureModel):
 
     def complement(self):
         return subnet_complement(self.network, [x.network for x in self.subnets.all()])
+
+    def divide(self, prefixlen=None):
+        if prefixlen is None:
+            prefixlen = self.network.prefixlen + 1
+        subnets = list(self.subnets.order_by('network'))
+        subnet_networks = [x.network for x in subnets]
+        networks = []
+        for subnet in self.network.subnet(prefixlen):
+            #if subnet in subnet_networks:
+                #continue
+            contains = [x for x in subnets if x.network in subnet]
+            networks.append((subnet, contains))
+        return networks
 
     def __str__(self):
         return str(self.network)

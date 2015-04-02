@@ -49,6 +49,51 @@
         padding-left: 80px;
     }
 
+    tr.disabled {
+        opacity: 0.5;
+    }
+
+    .na {
+        font-style: italic;
+    }
+
+
 </style>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type='text/javascript'>
+
+    $(document).ready(function() {
+
+        $('.fills').on('click', '.disable-network', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            $tr.find('input')
+                .attr('name', 'disabled_' + $tr.data('network-id'))
+                .hide()
+                .parent().append('<span class="na">This network will not be created</span>');
+            $tr.addClass('disabled');
+            $this.removeClass('disable-network').addClass('enable-network').html('Re-add');
+        });
+
+        $('.fills').on('click', '.enable-network', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            $tr.find('input')
+                .attr('name', 'network_' + $tr.data('network-id'))
+                .show().focus()
+                .parent().find('.na').remove();
+            $tr.removeClass('disabled');
+            $this.removeClass('enable-network').addClass('disable-network').html('Remove');
+        });
+
+    });
+
+</script>
 
 {% endblock %}

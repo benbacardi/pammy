@@ -1,13 +1,59 @@
-{% extend 'nuit/base.html' topbar=True %}
+{% extend 'pammy/base.html' %}
+
+{% block scripts %}
+{{block.super}}
+
+<script type='text/javascript'>
+
+    var divide_url = '{% url 'pammy/ui/divide_network' %}';
+    var network = '{{allocation.network}}';
+
+    $(document).ready(function() {
+
+        $('#prefixlen').change(function() {
+    
+            var len = $(this).val();
+            var request = $.get(divide_url, {'network': network, 'prefixlen': len});
+            request.done(function(d) {
+                $('tbody').empty().append(d);
+            });
+        });
+
+    });
+
+</script>
+
+{% endblock %}
 
 {% block content %}
 
 <h1>Divide {{allocation}}</h1>
 
-<ul>
-{% for network in allocation.complement %}
-    <li>{{network}}</li>
-{% endfor %}
-</ul>
+<p>Divide this network into as many equal-size subnets as possible.</p>
 
+<p><select name='prefixlen' id='prefixlen'>
+    {% for num, quantity in divisions %}
+    <option value='{{num}}'>/{{num}} ({{quantity}} maximum)</option>
+    {% endfor %}
+</select></p>
+
+<form method='post'>
+    {% csrf_token %}
+<table class='fills'>
+    <thead>
+        <tr>
+            <th class='range'>IP Range</th>
+            <th>Name</th>
+            <th class='subnets'>Hosts</th>
+            <th class='subnets'></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% include 'pammy/divide_create_network.html' %}
+    </tbody>
+</table>
+
+<input type='submit' value='Save' class='button' />
+
+</form>
 {% endblock %}

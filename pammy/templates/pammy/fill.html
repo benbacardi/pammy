@@ -10,15 +10,12 @@
         display: none;
     }
 
-    tr.disabled {
-        opacity: 0.5;
-    }
-
 </style>
 
 {% endblock %}
 
 {% block scripts %}
+{{block.super}}
 
 <script type='text/javascript'>
 
@@ -55,28 +52,6 @@
                 $d.find('input').first().focus();
                 $this.remove();
             });
-        });
-
-        $('.fills').on('click', '.disable-network', function(e) {
-            e.preventDefault();
-            var $this = $(this);
-            var $tr = $this.closest('tr');
-            $tr.find('input')
-                .attr('name', 'disabled_' + $tr.data('network-id'))
-                .hide();
-            $tr.addClass('disabled');
-            $this.removeClass('disable-network').addClass('enable-network').html('Re-add');
-        });
-
-        $('.fills').on('click', '.enable-network', function(e) {
-            e.preventDefault();
-            var $this = $(this);
-            var $tr = $this.closest('tr');
-            $tr.find('input')
-                .attr('name', 'network_' + $tr.data('network-id'))
-                .show().focus();
-            $tr.removeClass('disabled');
-            $this.removeClass('enable-network').addClass('disable-network').html('Remove');
         });
 
     });

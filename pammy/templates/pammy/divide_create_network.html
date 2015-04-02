@@ -1,0 +1,18 @@
+{% for network, existing in networks %}
+    {% if not existing.0.network == network %}
+    <tr>
+        <td>{{network}}</td>
+        <td><input type='text' name='network_{{network.value}}_{{network.prefixlen}}' /></td>
+        <td>{{network|length}}</td>
+        <td><a href='#' class='disable-network tiny radius icon button'>Remove</a></td>
+    </tr>
+    {% endif %}
+    {% for subnet in existing %}
+    <tr class='{% if not existing.0.network == network %}level-2{% endif %} disabled'>
+        <td>{{subnet}}</td>
+        <td>{{subnet.name}}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    {% endfor %}
+{% endfor %}
