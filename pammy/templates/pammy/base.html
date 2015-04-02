@@ -19,23 +19,24 @@
         padding: 0.2rem 0.4rem;
     }
 
+    table.allocations {
+        table-layout: fixed;
+    }
+
+    table.allocations td {
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
     table.allocations, table.fills {
         width: 100%;
     }
 
-    table.allocations .range {
-        width: 300px;
+    table.allocations .range, table.fills .range {
+        width: 200px;
     }
 
-    table.allocations .subnets {
-        width: 150px;
-    }
-
-    table.fills .range {
-        width: 300px;
-    }
-
-    table.fills .subnets {
+    table.allocations .subnets, table.fills .subnets {
         width: 150px;
     }
 

@@ -47,6 +47,20 @@
 
 <script type='text/javascript'>
 
+    var calculate_max = function() {
+        $('.range').width('180px');
+        var $tds = $('.allocations tbody tr td:first-child');
+        var max = $tds[0].scrollWidth;
+        $tds.each(function() {
+            if ($(this)[0].scrollWidth > max) {
+                max = $(this)[0].scrollWidth;
+            }
+        });
+        if ( max > 200 ) {
+            $('.range').width(max + 'px');
+        }
+    }
+
     $(document).ready(function() {
 
         $('.allocations').on('click', '.allocation-expand', function(e) {
@@ -65,6 +79,7 @@
                 $d.attr('data-supernet', $tr.data('network'));
                 $d.addClass('level-' + (level + 1));
                 $tr.after($d);
+                calculate_max();
             });
         });
 
@@ -83,6 +98,7 @@
 
             var $children = findChildren($tr);
             $children.remove();
+            calculate_max();
         });
 
     });
