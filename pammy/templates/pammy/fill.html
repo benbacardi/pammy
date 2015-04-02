@@ -24,7 +24,8 @@
         var show_text = 'Show existing subnets';
         var hide_text = 'Hide existing subnets';
 
-        $('#show-existing').click(function() {
+        $('#show-existing').click(function(e) {
+            e.preventDefault();
             $('.existing').toggle();
             if ($(this).html() == show_text) {
                 $(this).html(hide_text);
