@@ -51,9 +51,7 @@
         </tr>
     </thead>
     <tbody>
-        {% with allocation.subnets.all as allocations %}
-        {% include 'pammy/allocation_table.html' %}
-        {% endwith %}
+        {% include 'pammy/allocation_table.html' with allocations=allocation.subnets.all level=0 %}
     </tbody>
 </table>
 {% endif %}
@@ -64,7 +62,7 @@
 
 {% for network in allocation.get_ancestors %}
 
-<a href='{% url 'pammy/network' network=network.network %}'>{{network.network}}</a> ({{network.name}})
+<a href='{% url 'pammy/network' network=network.network %}?expand={{allocation.network}}'>{{network.network}}</a> ({{network.name}})
 {% if not forloop.last %}
 &rarr;
 {% endif %}

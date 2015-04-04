@@ -1,8 +1,8 @@
 {% for allocation in allocations %}
-    <tr data-network='{{allocation.network}}' data-level='0'>
+    <tr data-network='{{allocation.network}}' data-level='{{level|default:0}}' {% if level != None %}class='level-{{level}}'{% endif %}>
         <td>
             {% if allocation.subnets.exists %}
-                <a href='#' class='allocation-expand'><i class='fi-play'></i></a>
+            <a href='#' class='allocation-{% if allocation.network in expand %}collapse{% else %}expand{% endif %}'><i class='fi-play'></i></a>
             {% else %}
                 <i class='fi-list-thumbnails'></i>
             {% endif %}
@@ -17,4 +17,7 @@
             {% endif %}
         </td>
     </tr>
+    {% if allocation.network in expand %}
+        {% include 'pammy/allocation_table.html' with allocations=allocation.subnets.all level=level|add:1 %}
+    {% endif %}
 {% endfor %}

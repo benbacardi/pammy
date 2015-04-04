@@ -44,9 +44,16 @@ def ip_list(request):
     else:
         new_allocation = AllocationForm()
 
+    expand = set()
+    if 'expand' in request.GET:
+        for al in Allocation.objects.filter(network__in=request.GET.getlist('expand')):
+            for net in al.get_ancestors():
+                expand.add(net.network)
+
     return render(request, 'pammy/ip_list.html', {
         'new_allocation': new_allocation,
         'allocations': allocations,
+        'expand': expand,
     })
 
 def network(request, network):
@@ -62,9 +69,16 @@ def network(request, network):
     else:
         edit_form = AllocationForm(instance=allocation)
 
+    expand = set()
+    if 'expand' in request.GET:
+        for al in Allocation.objects.filter(network__in=request.GET.getlist('expand')):
+            for net in al.get_ancestors():
+                expand.add(net.network)
+
     return render(request, 'pammy/network.html', {
         'allocation': allocation,
         'edit_form': edit_form,
+        'expand': expand,
     })
 
 def delete(request, network):

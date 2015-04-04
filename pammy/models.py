@@ -63,10 +63,14 @@ class Allocation(ClosureModel):
 @receiver(models.signals.pre_delete, sender=Allocation)
 def shuffle_parents_on_delete(sender, **kwargs):
     instance = kwargs['instance']
-    instance.subnets.update(parent=instance.parent)
+    count = instance.subnets.update(parent=instance.parent)
+    if count:
+        Allocation.rebuildtable()
 
 @receiver(models.signals.post_save, sender=Allocation)
 def shuffle_parents_on_save(sender, **kwargs):
     instance = kwargs['instance']
     children = Allocation.objects.filter(network__is_subnet_of=instance.network, parent=instance.parent).exclude(pk=instance.pk)
-    children.update(parent=instance)
+    count = children.update(parent=instance)
+    if count:
+        Allocation.rebuildtable()
