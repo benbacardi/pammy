@@ -1,0 +1,97 @@
+{% extend 'pammy/base.html' rightmenu=True %}
+
+{% block right_menu %}
+
+{% menu_section is_list=True %}
+
+    {% if not allocation.fully_divided %}
+        {% url 'pammy/divide' network=allocation.network as divide_url %}
+        {% menu_item link=divide_url name='Divide' %}
+    {% endif %}
+    {% if not allocation.full %}
+        {% url 'pammy/fill' network=allocation.network as fill_url %}
+        {% menu_item link=fill_url name='Fill' %}
+    {% endif %}
+
+{% end_menu_section %}
+
+{% menu_section link_name='Edit' %}
+
+    <form method='post'>
+        {% foundation_form edit_form collapse_container=True %}
+        {% end_foundation_form %}
+        <input type='submit' class='tiny button expand' value='Save' />
+    </form>
+
+{% end_menu_section %}
+
+{% menu_section link_name='Delete' %}
+    <a href='#' data-reveal-id='delete-network' class='button alert expand tiny'>Delete Network</a>
+{% end_menu_section %}
+
+{% endblock %}
+
+{% block title %}
+{{allocation.network}} - {{allocation.name}}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{allocation.name}} <small>{{allocation.network}}</small></h1>
+
+{% if allocation.subnets.count %}
+<h3>Subnets</h3>
+
+<table class='allocations'>
+    <thead>
+        <tr>
+            <th class='range'>IP Range</th>
+            <th class='name'>Name</th>
+            <th class='subnets'>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% with allocation.subnets.all as allocations %}
+        {% include 'pammy/allocation_table.html' %}
+        {% endwith %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if allocation.parent %}
+
+<h3>Hierarchy</h3>
+
+{% for network in allocation.get_ancestors %}
+
+<a href='{% url 'pammy/network' network=network.network %}'>{{network.network}}</a> ({{network.name}})
+{% if not forloop.last %}
+&rarr;
+{% endif %}
+{% endfor %}
+
+{% endif %}
+
+<div id='delete-network' class='reveal-modal' data-reveal>
+    <h2>Delete {{allocation.name}} <small>{{allocation.network}}</small></h2>
+    <a class='close-reveal-modal'>&#215;</a>
+
+    <p>Are you sure you want to delete this network?</p>
+
+    <form method='post' action='{% url 'pammy/delete' network=allocation.network %}'>
+
+        {% csrf_token %}
+
+        {% if allocation.subnets.count %}
+        <p>
+            <input id='delete-subnets' name='delete-subnets' type='checkbox' /><label for='delete-subnets'>Also delete all {{allocation.get_descendants|length}} subnets contained in {{allocation}}</label>
+        </p>
+        {% endif %}
+
+        <input type='submit' value='Delete' class='button alert right' />
+
+    </form>
+
+</div>
+
+{% endblock %}

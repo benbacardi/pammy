@@ -53,8 +53,18 @@ def network(request, network):
 
     allocation = get_object_or_404(Allocation, network=network)
 
+    if request.method == 'POST':
+        edit_form = AllocationForm(request.POST, instance=allocation)
+        if edit_form.is_valid():
+            allocation = edit_form.save()
+            messages.success(request, 'Network updated.')
+            return HttpResponseRedirect(reverse('pammy/network', kwargs={'network': allocation.network}))
+    else:
+        edit_form = AllocationForm(instance=allocation)
+
     return render(request, 'pammy/network.html', {
         'allocation': allocation,
+        'edit_form': edit_form,
     })
 
 def delete(request, network):
