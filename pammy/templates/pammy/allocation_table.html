@@ -6,7 +6,7 @@
             {% else %}
                 <i class='fi-list-thumbnails'></i>
             {% endif %}
-            &nbsp;{{allocation.network}}</td>
+            &nbsp;<a href='{% url 'pammy/network' network=allocation.network %}'>{{allocation.network}}</a></td>
         <td>{{allocation.name}}</td>
         <td>
             {% if not allocation.fully_divided %}

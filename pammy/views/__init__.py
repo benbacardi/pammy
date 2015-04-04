@@ -49,6 +49,32 @@ def ip_list(request):
         'allocations': allocations,
     })
 
+def network(request, network):
+
+    allocation = get_object_or_404(Allocation, network=network)
+
+    return render(request, 'pammy/network.html', {
+        'allocation': allocation,
+    })
+
+def delete(request, network):
+
+    allocation = get_object_or_404(Allocation, network=network)
+
+    delete_subs = 'delete-subnets' in request.POST
+
+    to_delete = []
+    if delete_subs:
+        to_delete = list(allocation.get_descendants())
+    to_delete.append(allocation)
+
+    for x in to_delete:
+        x.delete()
+
+    messages.success(request, 'Successfully deleted {}{}'.format(allocation.network, ' and all contained subnets' if delete_subs else ''))
+
+    return HttpResponseRedirect(reverse('pammy/ip_list'))
+
 def divide(request, network):
 
     allocation = get_object_or_404(Allocation, network=network)

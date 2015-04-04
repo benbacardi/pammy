@@ -8,8 +8,10 @@ from .api.v1 import api as v1_api
 urlpatterns = patterns('',
 
     url(r'^$', 'pammy.views.ip_list', name='pammy/ip_list'),
+    url(r'^network/(?P<network>[\d\./]+)/$', 'pammy.views.network', name='pammy/network'),
     url(r'^divide/(?P<network>[\d\./]+)/$', 'pammy.views.divide', name='pammy/divide'),
     url(r'^fill/(?P<network>[\d\./]+)/$', 'pammy.views.fill', name='pammy/fill'),
+    url(r'^delete/(?P<network>[\d\./]+)$', 'pammy.views.delete', name='pammy/delete'),
 
     url(r'^ui/allocation-table/$', 'pammy.views.ui.allocation_table', name='pammy/ui/allocation_table'),
     url(r'^ui/split-network/$', 'pammy.views.ui.split_network', name='pammy/ui/split_network'),

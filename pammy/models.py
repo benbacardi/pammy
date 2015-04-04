@@ -54,6 +54,9 @@ class Allocation(ClosureModel):
     def __str__(self):
         return str(self.network)
 
+    class Meta:
+        ordering = ('network', )
+
     class ClosureMeta:
         parent_attr = 'parent'
 
