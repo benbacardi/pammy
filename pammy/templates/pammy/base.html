@@ -138,7 +138,9 @@
             calculate_max();
         });
 
-        calculate_max();
+        if ($('.allocations').length) {
+            calculate_max();
+        }
 
     });
 

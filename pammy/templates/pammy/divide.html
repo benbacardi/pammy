@@ -11,12 +11,19 @@
     $(document).ready(function() {
 
         $('#prefixlen').change(function() {
-    
             var len = $(this).val();
             var request = $.get(divide_url, {'network': network, 'prefixlen': len});
             request.done(function(d) {
                 $('tbody').empty().append(d);
             });
+        });
+
+        $('.button-group .button').click(function(e) {
+            e.preventDefault();
+            $this = $(this);
+            $('.button-group .button').addClass('secondary');
+            $this.removeClass('secondary');
+            $('#prefixlen').val($this.data('num')).change();
         });
 
     });
@@ -31,11 +38,17 @@
 
 <p>Divide this network into as many equal-size subnets as possible.</p>
 
-<p><select name='prefixlen' id='prefixlen'>
+<select name='prefixlen' id='prefixlen' style='display: none'>
     {% for num, quantity in divisions %}
     <option value='{{num}}'>/{{num}} ({{quantity}} maximum)</option>
     {% endfor %}
-</select></p>
+</select>
+
+<ul class='button-group even-{{divisions|length}} radius'>
+    {% for num, quantity in divisions %}
+    <li><a href='#' class='small button {% if not forloop.first %}secondary{% endif %}' data-num='{{num}}'>/{{num}} ({{quantity}})</a></li>
+    {% endfor %}
+</ul>
 
 <form method='post'>
     {% csrf_token %}

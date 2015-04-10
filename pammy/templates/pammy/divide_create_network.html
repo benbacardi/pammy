@@ -9,7 +9,7 @@
     {% endif %}
     {% for subnet in existing %}
     <tr class='{% if not existing.0.network == network %}level-2{% endif %} disabled'>
-        <td>{{subnet}}</td>
+        <td><a href='{% url 'pammy/network' network=subnet.network %}'>{{subnet}}</a></td>
         <td>{{subnet.name}}</td>
         <td></td>
         <td></td>
