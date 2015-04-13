@@ -47,6 +47,7 @@ def ip_list(request):
     expand = set()
     if 'expand' in request.GET:
         for al in Allocation.objects.filter(network__in=request.GET.getlist('expand')):
+            expand.add(al.network)
             for net in al.get_ancestors():
                 expand.add(net.network)
 
