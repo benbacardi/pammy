@@ -8,11 +8,14 @@ from netaddr import IPNetwork, IPAddress, AddrFormatError
 
 from ..models import Allocation
 from ..forms import AllocationForm
+from ..utils import reverse_querystring
 
 def create_posted_networks(request):
     networks = []
     for key, value in request.POST.items():
         if key.startswith('network_'):
+            if not value.strip():
+                continue
             try:
                 _, ip, prefix = key.split('_')
             except ValueError:
@@ -25,7 +28,7 @@ def create_posted_networks(request):
             if ip_network[0] != ip_address:
                 continue
             networks.append(str(ip_network))
-            Allocation(network=ip_network, name=value).save()
+            Allocation(network=ip_network, name=value.strip()).save()
     messages.success(request, 'Successfully created the networks {}'.format(', '.join(networks)))
 
 def ip_list(request):
@@ -85,6 +88,7 @@ def network(request, network):
 def delete(request, network):
 
     allocation = get_object_or_404(Allocation, network=network)
+    parent = allocation.parent
 
     delete_subs = 'delete-subnets' in request.POST
 
@@ -98,7 +102,11 @@ def delete(request, network):
 
     messages.success(request, 'Successfully deleted {}{}'.format(allocation.network, ' and all contained subnets' if delete_subs else ''))
 
-    return HttpResponseRedirect(reverse('pammy/ip_list'))
+    if parent:
+        url = reverse_querystring('pammy/ip_list', query_kwargs={'expand': parent.network})
+    else:
+        url = reverse('pammy/ip_list')
+    return HttpResponseRedirect(url)
 
 def divide(request, network):
 
@@ -106,7 +114,7 @@ def divide(request, network):
 
     if request.method == 'POST':
         create_posted_networks(request)
-        return HttpResponseRedirect(reverse('pammy/ip_list'))
+        return HttpResponseRedirect(reverse('pammy/network', kwargs={'network': allocation.network}))
 
     divisions = zip(range(allocation.network.prefixlen + 1, 33), [2**x for x in range(1, 33)])
 
@@ -124,13 +132,13 @@ def fill(request, network):
 
     if request.method == 'POST':
         create_posted_networks(request)
-        return HttpResponseRedirect(reverse('pammy/ip_list'))
+        return HttpResponseRedirect(reverse('pammy/network', kwargs={'network': allocation.network}))
 
     complement = list(allocation.complement())
 
     if not complement:
         messages.warning(request, 'There are no gaps to fill in {}'.format(allocation.network))
-        return HttpResponseRedirect(reverse('pammy/ip_list'))
+        return HttpResponseRedirect(reverse_querystring('pammy/ip_list', query_kwargs={'expand': allocation.network}))
 
     complements = [(x, None) for x in complement]
     existing = [(x.network, x) for x in allocation.subnets.all()]
